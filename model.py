@@ -92,10 +92,10 @@ class PokerGameModel:
     def update_term(self) -> None:
         self._term_number += 1
 
-        if self._term_number > 2: #3
+        if self._term_number > 3:
             self._is_game_over = True
         
-        return
+        return    
     
     def _distribute_hands(self) -> dict[int, list[Card]]:
         # distribute cards one by one to each player
@@ -110,3 +110,12 @@ class PokerGameModel:
                 all_hands[j+1].append(self._deck.pop(0))
 
         return all_hands
+    
+    def pull_card(self, is_first_term: bool):
+        if is_first_term:
+            for _ in range(3):
+                self._discards.append(self._deck.pop(0))
+        else:
+            self._discards.append(self._deck.pop(0))
+        
+        self._center_cards.append(self._deck.pop(0))

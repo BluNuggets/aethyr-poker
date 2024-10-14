@@ -16,27 +16,40 @@ class PokerMainController:
 
         while not model.is_game_over:
             view.clear_screen()
-            view.show_term_number(model.term)
 
             if is_new_game:
                 model.setup(model.deck)
                 is_new_game = False
 
-            #setup the initial deck and hands
-            view.show_center_cards(model.center_cards)
-            view.show_personal_hand(model.all_hands, model.cur_player)
+            if model.term == 1:
+                model.pull_card(True)
+            else:
+                # does this twice when 2nd/3rd term
+                model.pull_card(False)
+                model.pull_card(False)
 
-            action: Action = view.ask_for_action()
+            print('new\n')
 
-            if action == Action.DISCARD:
-                print(action)
-            elif action == Action.INAUGURATE:
-                print(action)
-            #else continue to next player/new term
-            
-            #print(model.center_cards)
+            for _ in range(1,model.players+1):
+                view.clear_screen()
+                view.show_term_number(model.term)
 
-            model.update_player()
+                #setup the initial deck and hands
+                view.show_center_cards(model.center_cards)
+                view.show_personal_hand(model.all_hands, model.cur_player)
+
+                action: Action = view.ask_for_action()
+
+                if action == Action.DISCARD:
+                    print(action)
+                elif action == Action.INAUGURATE:
+                    print(action)
+                #else continue to next player/new term
+                
+                #print(model.center_cards)
+                print(model.discards)
+
+                model.update_player()
 
 #first ask for number of players
 view = PokerTerminalView()
