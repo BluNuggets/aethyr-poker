@@ -19,11 +19,14 @@ class Rank(IntEnum):
     Seven = 7
     Eight = 8
     Nine = 9
-    Child = 10
-    President = 11
-    Phoenix = 12
+    #Avoiding the Straight
+    Child = 11
+    President = 12
+    #Avoiding the Straight Again
+    Phoenix = 14
     
 class Suit(IntEnum):
+    NoSuit = 0
     Flames = 1
     Circuits = 2
     Puzzles = 3
