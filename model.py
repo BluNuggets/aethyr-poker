@@ -88,6 +88,7 @@ class PokerGameModel:
             self.update_term()
         else:
             self._current_player += 1
+        return
 
     def update_term(self) -> None:
         self._term_number += 1

@@ -44,11 +44,21 @@ class PokerTerminalView:
             print()
         return
     
-    def show_personal_hand_only(self, all_hands: dict[int, list[Card]], current_player: int) -> None:
+    def show_personal_hand_only(self, current_hand: list[Card], current_player: int) -> None:
         """Show the hand of the current player. For discard purposes"""
         print(f'Player {current_player}')
             
-        for i, card in enumerate(all_hands[current_player]):
+        for i, card in enumerate(current_hand):
+            print(f'[{i+1}] {card}')
+        
+        print()
+        return
+    
+    def show_active_president_cards(self, current_hand: list[Card]) -> None:
+        """Show the hand of the president cards. For inaugurate purposes"""
+        print(f'Active President Cards')
+            
+        for i, card in enumerate(current_hand):
             print(f'[{i+1}] {card}')
         
         print()
@@ -86,7 +96,7 @@ class PokerTerminalView:
         self.clear_screen()
         print(f'------------ DISCARD PHASE ------------')
         self.show_center_cards(center)
-        self.show_personal_hand_only(all_hands, current_player)
+        self.show_personal_hand_only(all_hands[current_player], current_player)
 
         personal_hand: list[Card] = all_hands[current_player]
 
@@ -95,11 +105,50 @@ class PokerTerminalView:
                 self.clear_screen()
                 print(f'------------ DISCARD PHASE ------------')
                 self.show_center_cards(center)
-                self.show_personal_hand_only(all_hands, current_player)
+                self.show_personal_hand_only(all_hands[current_player], current_player)
                 continue
             
             return dis-1
+
+    def ask_for_inaugurate(self, all_hands: dict[int, list[Card]], current_player: int, center: list[Card]) -> tuple[Card | None, Card | None, bool]:
+        """Ask the user for which Card to inaugurate (given that there is a child).
+
+        Returns two things:
+            the index of the child card
+            the index of the president card to be swapped
+            if the card comes from the center (else from another player)"""
+        child_to_pick: list[Card] = [i for i in all_hands[current_player] if i.rank == 11]
+        president_to_pick: list[Card] = [i for i in center if i.rank == 12]
+
+        self._show_inaugurate_details(center, child_to_pick, president_to_pick, current_player)
+
+        if len(child_to_pick) == 0:
+            self._print_error(f'[INVALID ACTION] No child cards to inaugurate.')
+            return (None, None, False)
         
+        # now that i think about it, this should not be possible because there will always be one president active, but sure
+        elif len(president_to_pick) == 0:
+            self._print_error(f'[INVALID ACTION] No president cards to swap with.')
+            return (None, None, False)
+
+        while True:
+            if (child_index := self._ask_for_choice("Select the child card to inaugurate", len(child_to_pick))) is None:
+                self._show_inaugurate_details(center, child_to_pick, president_to_pick, current_player)
+                continue
+
+            if (president_index := self._ask_for_choice("Select the president card to swap with", len(president_to_pick))) is None:
+                self._show_inaugurate_details(center, child_to_pick, president_to_pick, current_player)
+                continue
+            
+            return (child_to_pick[child_index-1], president_to_pick[president_index-1], True)
+    
+    def _show_inaugurate_details(self, center: list[Card], child: list[Card], parent: list[Card], cur: int):
+        self.clear_screen()
+        print(f'------------ INAUGURATE PHASE ------------')
+        self.show_center_cards(center)
+        self.show_personal_hand_only(child, cur)
+        self.show_active_president_cards(parent)
+
     def _show_all_actions(self) -> None:
         """Show all possible actions for a term."""
         print(f'Actions: ')
@@ -110,7 +159,8 @@ class PokerTerminalView:
         """Catch errors in case user enters out of bounds / invalid input"""
 
         try:
-            inp: int = int(self._input(f'{msg} [{l_bound} - {u_bound}]: '))
+            inp: int = int(self._input(f'{msg} [{l_bound} - {u_bound}]: ') if u_bound > 1 \
+                           else self._input(f'{msg} [{u_bound}]: ') )
 
             if inp < l_bound or inp > u_bound:
                 raise ValueError()

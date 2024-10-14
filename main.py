@@ -1,4 +1,4 @@
-from common_types import Action
+from common_types import Action, Card
 from model import PokerGameModel
 from view import PokerTerminalView
 import pprint as p # for testing purposes
@@ -12,7 +12,7 @@ class PokerMainController:
         model = self._model
         view = self._view
 
-        is_new_game = True
+        is_new_game: bool = True
 
         while not model.is_game_over:
             if is_new_game:
@@ -40,7 +40,12 @@ class PokerMainController:
                     discarded_card: int = view.ask_for_discards(model.all_hands, model.cur_player, model.center_cards)
                     model.action_discard(discarded_card)
                 elif action == Action.INAUGURATE:
-                    print(action)
+                    inaugurate_output: tuple[Card | None, Card | None, bool] = view.ask_for_inaugurate(model.all_hands, model.cur_player, model.center_cards)
+
+                    if not inaugurate_output[2]:
+                        continue
+
+                    model.action_inau(inaugurate_output[0], inaugurate_output[1])
                 #else continue to next player/new term
                 
                 #print(model.center_cards)
