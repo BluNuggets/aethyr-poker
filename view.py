@@ -65,6 +65,7 @@ class PokerTerminalView:
                 self.show_term_number(term)
                 self.show_center_cards(center)
                 self.show_personal_hand(all, cur)
+                self._show_all_actions()
                 continue
             
             return actions[action_int - 1]
