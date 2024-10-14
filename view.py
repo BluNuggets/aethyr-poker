@@ -3,7 +3,6 @@ import sys
 import time
 from common_types import Card, Action
 from collections.abc import Sequence, Mapping
-from typing import Generic
 
 MAX_PLAYER: int = 8
 MAX_CENTER_CARDS: int = 6
@@ -143,6 +142,7 @@ class PokerTerminalView:
             return (child_to_pick[child_index-1], president_to_pick[president_index-1], True)
     
     def _show_inaugurate_details(self, center: list[Card], child: list[Card], parent: list[Card], cur: int):
+        """Show details of Inauguration Phase."""
         self.clear_screen()
         print(f'------------ INAUGURATE PHASE ------------')
         self.show_center_cards(center)

@@ -34,7 +34,7 @@ class PokerMainController:
 
             # Main Game
             view.clear_screen()
-            print(is_error)
+            
             view.show_term_number(model.term)
             view.show_center_cards(model.center_cards)
             view.show_personal_hand(model.all_hands, model.cur_player)
