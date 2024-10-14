@@ -15,39 +15,36 @@ class PokerMainController:
         is_new_game = True
 
         while not model.is_game_over:
-            view.clear_screen()
-
             if is_new_game:
+                # setup the initial deck and hands
                 model.setup(model.deck)
                 is_new_game = False
 
             if model.term == 1:
+                # once only for first term (betting WIP)
                 model.pull_card(True)
             else:
                 # does this twice when 2nd/3rd term
                 model.pull_card(False)
                 model.pull_card(False)
 
-            print('new\n')
-
             for _ in range(1,model.players+1):
                 view.clear_screen()
-                view.show_term_number(model.term)
 
-                #setup the initial deck and hands
+                view.show_term_number(model.term)
                 view.show_center_cards(model.center_cards)
                 view.show_personal_hand(model.all_hands, model.cur_player)
-
-                action: Action = view.ask_for_action()
+                action: Action = view.ask_for_action(model.term, model.center_cards, model.all_hands, model.cur_player)
 
                 if action == Action.DISCARD:
-                    print(action)
+                    discarded_card: int = view.ask_for_discards(model.all_hands, model.cur_player, model.center_cards)
+                    model.action_discard(discarded_card)
                 elif action == Action.INAUGURATE:
                     print(action)
                 #else continue to next player/new term
                 
                 #print(model.center_cards)
-                print(model.discards)
+                #print(model.discards)
 
                 model.update_player()
 

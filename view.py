@@ -16,9 +16,11 @@ class PokerTerminalView:
         os.system(cmd)
 
     def show_term_number(self, term: int):
-        print(f'Term {term}\n')
+        """Show term number."""
+        print(f'------------ Term {term} ------------\n')
 
     def show_center_cards(self, cards: list[Card]) -> None:
+        """Show Center Cards."""
         print(f'Center Cards: \n')
 
         for i in range(MAX_CENTER_CARDS):
@@ -30,6 +32,7 @@ class PokerTerminalView:
         print()
 
     def show_personal_hand(self, all_hands: dict[int, list[Card]], current_player: int) -> None:
+        """Show the *PERSONAL* hand of the current player. Other player cards are hidden."""
         for hand in all_hands:
             print(f'Player {hand} (current)') if hand == current_player \
                 else print(f'Player {hand}')
@@ -41,14 +44,27 @@ class PokerTerminalView:
             print()
         return
     
-    def ask_for_action(self) -> Action:
+    def show_personal_hand_only(self, all_hands: dict[int, list[Card]], current_player: int) -> None:
+        """Show the hand of the current player. For discard purposes"""
+        print(f'Player {current_player}')
+            
+        for i, card in enumerate(all_hands[current_player]):
+            print(f'[{i+1}] {card}')
+        
+        print()
+        return
+
+    def ask_for_action(self, term: int, center: list[Card], all: dict[int, list[Card]], cur: int) -> Action:
+        """Ask the user for actions."""
         actions: list[Action] = list(Action)
         self._show_all_actions()
         
         while True:
             if (action_int := self._ask_for_choice("Select action", len(Action))) is None:
                 self.clear_screen()
-                self._show_all_actions()
+                self.show_term_number(term)
+                self.show_center_cards(center)
+                self.show_personal_hand(all, cur)
                 continue
             
             return actions[action_int - 1]
@@ -63,8 +79,28 @@ class PokerTerminalView:
                 continue
             
             return player_count
+        
+    def ask_for_discards(self, all_hands: dict[int, list[Card]], current_player: int, center: list[Card]) -> int:
+        """Ask the user for which Card to discard."""
+        self.clear_screen()
+        print(f'------------ DISCARD PHASE ------------')
+        self.show_center_cards(center)
+        self.show_personal_hand_only(all_hands, current_player)
 
+        personal_hand: list[Card] = all_hands[current_player]
+
+        while True:
+            if (dis := self._ask_for_choice("Select the card to discard", len(personal_hand))) is None:
+                self.clear_screen()
+                print(f'------------ DISCARD PHASE ------------')
+                self.show_center_cards(center)
+                self.show_personal_hand_only(all_hands, current_player)
+                continue
+            
+            return dis-1
+        
     def _show_all_actions(self) -> None:
+        """Show all possible actions for a term."""
         print(f'Actions: ')
         for i, action in enumerate(Action):
             print(f'[{i+1}] {action}')

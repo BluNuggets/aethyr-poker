@@ -111,7 +111,7 @@ class PokerGameModel:
 
         return all_hands
     
-    def pull_card(self, is_first_term: bool):
+    def pull_card(self, is_first_term: bool) -> None:
         if is_first_term:
             for _ in range(3):
                 self._discards.append(self._deck.pop(0))
@@ -119,3 +119,15 @@ class PokerGameModel:
             self._discards.append(self._deck.pop(0))
         
         self._center_cards.append(self._deck.pop(0))
+        return
+
+    def action_discard(self, discarded_index: int) -> None:
+        new_card: Card = self._deck.pop(0)
+        discarded_card: Card = self._all_hands[self._current_player][discarded_index]
+        
+        #append discarded to discard pile
+        self._discards.append(discarded_card)
+
+        #switch discard card to new card in player handi
+        self._all_hands[self._current_player][discarded_index] = new_card
+        return
