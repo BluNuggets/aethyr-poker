@@ -14,6 +14,7 @@ class PokerGameModel:
         self._center_cards: list[Card] = []
         self._discards: list[Card] = []
 
+        self._did_inauguration_happen = False
         self._is_game_over: bool = False
 
     @property
@@ -43,6 +44,10 @@ class PokerGameModel:
     @property
     def all_hands(self) -> dict[int, list[Card]]:
         return self._all_hands
+    
+    @property
+    def did_inauguration_happen(self) -> bool:
+        return self._did_inauguration_happen
     
     @property
     def is_game_over(self) -> bool:
@@ -131,4 +136,21 @@ class PokerGameModel:
 
         #switch discard card to new card in player handi
         self._all_hands[self._current_player][discarded_index] = new_card
+        return
+    
+    def action_inau(self, child: Card, pres: Card) -> None: #to appease pylance
+        #find child in current hand and swap to pres
+        for i, card in enumerate(self._all_hands[self._current_player]):
+            if child == card:
+                self._all_hands[self._current_player].pop(i)
+                self._all_hands[self._current_player].append(pres)
+                break
+        
+        #find parent in center (or other) hand and swap to child
+        for i, card in enumerate(self._center_cards):
+            if pres == card:
+                self._center_cards.pop(i)
+                self._center_cards.append(child)
+                break
+
         return

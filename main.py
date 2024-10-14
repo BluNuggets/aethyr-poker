@@ -13,6 +13,8 @@ class PokerMainController:
         view = self._view
 
         is_new_game: bool = True
+        is_error: bool = False
+        term_check = 0
 
         while not model.is_game_over:
             if is_new_game:
@@ -20,38 +22,41 @@ class PokerMainController:
                 model.setup(model.deck)
                 is_new_game = False
 
-            if model.term == 1:
-                # once only for first term (betting WIP)
-                model.pull_card(True)
-            else:
-                # does this twice when 2nd/3rd term
-                model.pull_card(False)
-                model.pull_card(False)
+            if not is_error and model.term != term_check:
+                if model.term == 1:
+                    # once only for first term (betting WIP)
+                    model.pull_card(True)
+                else:
+                    # does this twice when 2nd/3rd term
+                    model.pull_card(False)
+                    model.pull_card(False)
+                term_check += 1
 
-            for _ in range(1,model.players+1):
-                view.clear_screen()
+            # Main Game
+            view.clear_screen()
+            print(is_error)
+            view.show_term_number(model.term)
+            view.show_center_cards(model.center_cards)
+            view.show_personal_hand(model.all_hands, model.cur_player)
+            action: Action = view.ask_for_action(model.term, model.center_cards, model.all_hands, model.cur_player)
 
-                view.show_term_number(model.term)
-                view.show_center_cards(model.center_cards)
-                view.show_personal_hand(model.all_hands, model.cur_player)
-                action: Action = view.ask_for_action(model.term, model.center_cards, model.all_hands, model.cur_player)
+            if action == Action.DISCARD:
+                discarded_card: int = view.ask_for_discards(model.all_hands, model.cur_player, model.center_cards)
+                model.action_discard(discarded_card)
+            elif action == Action.INAUGURATE:
+                inaugurate_output: tuple[Card | None, Card | None, bool] = view.ask_for_inaugurate(model.all_hands, model.cur_player, model.center_cards)
 
-                if action == Action.DISCARD:
-                    discarded_card: int = view.ask_for_discards(model.all_hands, model.cur_player, model.center_cards)
-                    model.action_discard(discarded_card)
-                elif action == Action.INAUGURATE:
-                    inaugurate_output: tuple[Card | None, Card | None, bool] = view.ask_for_inaugurate(model.all_hands, model.cur_player, model.center_cards)
+                if not inaugurate_output[2]:
+                    is_error = True
+                    continue
 
-                    if not inaugurate_output[2]:
-                        continue
-
-                    model.action_inau(inaugurate_output[0], inaugurate_output[1])
-                #else continue to next player/new term
-                
-                #print(model.center_cards)
-                #print(model.discards)
-
-                model.update_player()
+                model.action_inau(inaugurate_output[0], inaugurate_output[1])
+            #else continue to next player/new term
+            
+            #print(model.center_cards)
+            #print(model.discards)
+            is_error = False
+            model.update_player()
 
 #first ask for number of players
 view = PokerTerminalView()
