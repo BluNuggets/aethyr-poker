@@ -1,41 +1,6 @@
-from typing import NewType
-from common_types import Rank, Suit
+from common_types import Rank, Suit, Card
 import random
 import pprint as p # for testing purposes
-
-# --- class for card (singular)
-# pylance does not like dunder methods, hence the many type ignores :/
-class Card:
-    def __init__(self, rank: Rank, suit: Suit):
-        self.rank = rank
-        self.suit = suit
-
-    def __repr__(self):
-        return f"{self.rank.name} of {self.suit.name}" if self.suit != Suit.NoSuit \
-            else f"{self.rank.name} Card"
-
-    # comparisons for rank
-    def __str__(self):
-        return f"{self.rank.name} of {self.suit.name}"
-    
-    def __lt__(self, other: object) -> bool:
-        return self.rank < other.rank
-    
-    def __le__(self, other: object) -> bool:
-        return self.rank <= other.rank
-    
-    def __gt__(self, other: object) -> bool:
-        return self.rank > other.rank
-    
-    def __ge__(self, other: object) -> bool:
-        return self.rank >= other.rank
-    
-    def rank_eq(self, other: object) -> bool:
-        return self.rank == other.rank
-
-    def suit_eq(self, other: object) -> bool:
-        return self.suit == other.suit
-
     
 class PokerGameModel:
     def __init__(self, players: int):
@@ -105,8 +70,8 @@ class PokerGameModel:
         return card_list + [Card(Rank.Phoenix, Suit.NoSuit)]
     
     def setup(self, deck: list[Card]) -> None:
+        '''Setup the hands for the players and first term'''
         president_cards: list[int] = [i for i, card in enumerate(deck) if card.rank == 12]
-        p.pp(president_cards)
 
         random.shuffle(president_cards)
         picked_pres: int = president_cards[0]
@@ -115,13 +80,19 @@ class PokerGameModel:
         random.shuffle(self._deck)
 
         self._all_hands = self._distribute_hands()
-        p.pp(self._all_hands)
         return
     
+    def update_player(self) -> None:
+        if self._current_player == self._players:
+            self._current_player = 1
+            self.update_term()
+        else:
+            self._current_player += 1
+
     def update_term(self) -> None:
         self._term_number += 1
 
-        if self._term_number > 3:
+        if self._term_number > 2: #3
             self._is_game_over = True
         
         return
