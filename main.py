@@ -1,16 +1,19 @@
 from common_types import Action, Card
 from model import PokerGameModel
 from view import PokerTerminalView
+from scoring_system import PokerScore
 import pprint as p # for testing purposes
 
 class PokerMainController:
-    def __init__(self, model: PokerGameModel, view: PokerTerminalView):
+    def __init__(self, model: PokerGameModel, view: PokerTerminalView, score: PokerScore):
         self._model = model
         self._view = view
+        self._score = score
 
     def start(self):
         model = self._model
         view = self._view
+        score = self._score
 
         is_new_game: bool = True
         is_error: bool = False
@@ -57,12 +60,16 @@ class PokerMainController:
             #print(model.discards)
             is_error = False
             model.update_player()
+        
+        score.score_hand(model.all_hands, model.center_cards)
 
+        
 #first ask for number of players
 view = PokerTerminalView()
 view.clear_screen()
 player_count = view.ask_for_number_of_players()
 
 model = PokerGameModel(player_count)
-controller = PokerMainController(model, view)
+score = PokerScore()
+controller = PokerMainController(model, view, score)
 controller.start()
