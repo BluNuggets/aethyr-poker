@@ -2,6 +2,8 @@ from common_types import Rank, Suit, Card
 import random
 import pprint as p # for testing purposes
     
+TERMS: int = 3
+
 class PokerGameModel:
     def __init__(self, players: int):
         self._players: int = players
@@ -98,7 +100,7 @@ class PokerGameModel:
     def update_term(self) -> None:
         self._term_number += 1
 
-        if self._term_number > 3:
+        if self._term_number > TERMS:
             self._is_game_over = True
         
         return    

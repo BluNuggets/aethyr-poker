@@ -4,7 +4,7 @@ import time
 from common_types import Card, Action
 from collections.abc import Sequence, Mapping
 
-MAX_PLAYER: int = 8
+MAX_PLAYER: int = 2
 MAX_CENTER_CARDS: int = 6
 
 class PokerTerminalView:

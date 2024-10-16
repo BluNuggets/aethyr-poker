@@ -61,7 +61,7 @@ class PokerMainController:
             is_error = False
             model.update_player()
         
-        score.score_hand(model.all_hands, model.center_cards)
+        score.score_hand(model.players, model.all_hands, model.center_cards)
 
         
 #first ask for number of players
