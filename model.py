@@ -56,7 +56,7 @@ class PokerGameModel:
         return self._is_game_over
     
     def _create_deck(self) -> list[Card]:
-        '''Create a deck of 109 Cards for Aethyr Poker'''
+        '''Create a deck of 108 Cards for Aethyr Poker''' # 109 with Phoenix
         
         card_list: list[Card] = []
 
@@ -73,8 +73,11 @@ class PokerGameModel:
                         
                         card_list.append(Card(j,k))
         
-        #add Phoenix suit at the end
-        return card_list + [Card(Rank.Phoenix, Suit.NoSuit)]
+        
+        return card_list
+    
+        # add Phoenix suit at the end (WIP)
+        # return card_list + [Card(Rank.Phoenix, Suit.NoSuit)]
     
     def setup(self, deck: list[Card]) -> None:
         '''Setup the hands for the players and first term'''
@@ -108,6 +111,7 @@ class PokerGameModel:
     def _distribute_hands(self) -> dict[int, list[Card]]:
         # distribute cards one by one to each player
         all_hands: dict[int, list[Card]] = {}
+        new_card: Card
 
         # (popping the first 3 cards for each player could work, but it seems funnier to do it this way)
         for i in range(3):
@@ -115,28 +119,36 @@ class PokerGameModel:
                 if i == 0:
                     all_hands[j+1] = []
 
-                all_hands[j+1].append(self._deck.pop(0))
+                new_card = self._deck.pop(0)
+
+                all_hands[j+1].append(new_card)
 
         return all_hands
     
     def pull_card(self, is_first_term: bool) -> None:
+        new_card: Card
+        new_card = self._deck.pop(0)
+
         if is_first_term:
-            for _ in range(3):
-                self._discards.append(self._deck.pop(0))
+            for i in range(3):
+                if i != 0:
+                    new_card = self._deck.pop(0)
+                self._discards.append(new_card)
         else:
-            self._discards.append(self._deck.pop(0))
-        
-        self._center_cards.append(self._deck.pop(0))
+            self._discards.append(new_card)
+
+        self._center_cards.append(new_card)
         return
 
     def action_discard(self, discarded_index: int) -> None:
         new_card: Card = self._deck.pop(0)
+
         discarded_card: Card = self._all_hands[self._current_player][discarded_index]
         
         #append discarded to discard pile
         self._discards.append(discarded_card)
 
-        #switch discard card to new card in player handi
+        #switch discard card to new card in player hand
         self._all_hands[self._current_player][discarded_index] = new_card
         return
     

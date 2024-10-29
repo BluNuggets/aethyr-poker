@@ -9,10 +9,10 @@ class PokerScore:
 
         for player in all_hands:
             card_list: list[tuple[Card, ...]] = list(combinations(all_hands[player] + center, 6))
-            p.pp(all_hands)
+            #p.pp(all_hands)
 
-            p.pp(card_list)
-            print(len(card_list))
+            #p.pp(card_list)
+            #print(len(card_list))
             
             self._check_matches(card_list)
             self._check_runs(card_list)

@@ -23,7 +23,7 @@ class Rank(IntEnum):
     Child = 11
     President = 12
     #Avoiding the Straight Again
-    Phoenix = 14
+    # Phoenix = 14 - disabled for now
     
 class Suit(IntEnum):
     NoSuit = 0
