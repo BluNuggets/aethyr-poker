@@ -55,20 +55,20 @@ class Card:
         return f"{self.rank.name} of {self._suit.name}" if self._suit != Suit.NoSuit \
             else f"{self._rank.name} Card"
     
-    def __lt__(self, other: object) -> bool:
+    def __lt__(self, other: Card) -> bool:
         return self.rank < other.rank
     
-    def __le__(self, other: object) -> bool:
+    def __le__(self, other: Card) -> bool:
         return self.rank <= other.rank
     
-    def __gt__(self, other: object) -> bool:
+    def __gt__(self, other: Card) -> bool:
         return self.rank > other.rank
     
-    def __ge__(self, other: object) -> bool:
+    def __ge__(self, other: Card) -> bool:
         return self.rank >= other.rank
     
-    def rank_eq(self, other: object) -> bool:
+    def rank_eq(self, other: Card) -> bool:
         return self.rank == other.rank
 
-    def suit_eq(self, other: object) -> bool:
+    def suit_eq(self, other: Card) -> bool:
         return self.suit == other.suit
