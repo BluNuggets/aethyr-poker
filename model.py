@@ -5,8 +5,8 @@ import pprint as p # for testing purposes
 TERMS: int = 3
 
 class PokerGameModel:
-    def __init__(self, players: int):
-        self._players: int = players
+    def __init__(self):
+        self._players: int
         self._term_number: int = 1
         self._current_player: int = 1
 
@@ -55,6 +55,9 @@ class PokerGameModel:
     def is_game_over(self) -> bool:
         return self._is_game_over
     
+    def register_player_count(self, count: int) -> None:
+        self._players = count
+
     def _create_deck(self) -> list[Card]:
         '''Create a deck of 108 Cards for Aethyr Poker''' # 109 with Phoenix
         
