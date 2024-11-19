@@ -6,7 +6,6 @@ from scoring_system import PokerScore
 import pprint as p # for testing purposes
 
 if __name__ == "__main__":
-    #first ask for number of players
     view = PokerTerminalView()
     model = PokerGameModel()
     score = PokerScore()
