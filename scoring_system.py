@@ -26,6 +26,7 @@ class PokerScore:
         #print(output)
         return high
     
+    # might be better to follow one of the SOLID principles here
     def _check_matches(self, cl: list[Card]) -> int:
         high: int = 0
         cl.sort()

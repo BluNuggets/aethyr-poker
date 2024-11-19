@@ -3,6 +3,7 @@ import random
 import pprint as p # for testing purposes
     
 TERMS: int = 3
+COPIES: int = 3
 
 class PokerGameModel:
     def __init__(self):
@@ -69,7 +70,7 @@ class PokerGameModel:
                     #continue if Phoenix Rank or NoSuit Suit
                     continue
                 else:
-                    for _ in range(3):
+                    for _ in range(COPIES):
                         if j == 11:
                             #add one more child for each suit
                             card_list.append(Card(j,k))
